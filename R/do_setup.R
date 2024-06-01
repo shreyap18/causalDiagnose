@@ -29,10 +29,6 @@ pointest <- function(arg, samplesize, main_dir, subdata_all, yonx, xiony, seed.v
 
     sum(diag(K%*%H%*%L%*%H))/n^2
   }
-
-  # yonx <- formula("mbdi~sleep")
-  # ## for anm for bmd data
-  # yonx <- formula("mbdi~splines::bs(sleep, knots = c(12, 16))")
   X <- randomdataset1[,"x"]
   fityonx <- lm(yonx, data=randomdataset1)
   beta <- coef(fityonx)
@@ -40,12 +36,7 @@ pointest <- function(arg, samplesize, main_dir, subdata_all, yonx, xiony, seed.v
   theta <- est.fun(X,e.y,nrow(randomdataset1))
 
   write.csv(theta,file.path(yonx_dir,"thetahat.csv"))
-  ####################
-
   ############################################################xony######################################
-  # xiony <- formula("sleep~mbdi")
-  # ## for anm for bmd data
-  # xiony <- formula("sleep~splines::bs(mbdi, knots = c(0.8))")
   fitxiony <- lm(xiony, data=randomdataset1)
   betai <- coef(fitxiony)
   e.x <- residuals(fitxiony)
@@ -67,6 +58,7 @@ do_setup <- function(data, main_dir, sampsize, yonx, xiony, nsubsamp = 100){
   trials <- 1:nsubsamp
   main_dir <- file.path(main_dir,paste0("samplesize",sampsize))
   dir.create(main_dir)
-  lapply(trials, verify_setup, sampsize = sampsize, main_dir = main_dir, subdata_all = data, yonx = yonx, xiony = xiony, seed.vec = seed.vec)
+  # lapply(trials, verify_setup, sampsize = sampsize, main_dir = main_dir, subdata_all = data, yonx = yonx, xiony = xiony, seed.vec = seed.vec)
+  all <- parallel::mclapply(trials, verify_setup, sampsize = sampsize, main_dir = main_dir, subdata_all = data, yonx = yonx, xiony = xiony, seed.vec = seed.vec, mc.cores = parallel::detectCores() - 1)
 }
 

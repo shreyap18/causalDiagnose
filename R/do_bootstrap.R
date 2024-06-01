@@ -15,13 +15,6 @@ do.one.xony.seperate <- function(seed.id,dataset,theta,xiony)
 {
   ## randomization
   set.seed(seed.id+2333)
-  ###
-
-  # splines
-  # xiony <- formula("sleep ~ splines::bs(mbdi, knots = c(12, 16))")
-
-  # not splines
-  # xiony <- formula("sleep~mbdi")
   fitxiony <- lm(xiony, data=dataset)
   betai <- coef(fitxiony)
   e.yi <- residuals(fitxiony)
@@ -53,13 +46,6 @@ do.one.yonx.seperate <- function(seed.id,dataset,theta,yonxi)
 {
   ## randomization
   set.seed(seed.id+2333)
-  ###
-
-  # splines
-  # yonxi <- formula("mbdi ~ splines::bs(sleep, knots = c(0.8))")
-
-  # not splines
-  # yonxi <- formula("y~sleep")
   xi <- data.frame(dataset[,"x"])
   colnames(xi) <- "x"
   fityonxi <- lm(yonxi, data=dataset)
@@ -94,8 +80,6 @@ do_one <- function(i, j, sampsize, main_dir, xiony, yonxi, nsubsamp = 100)
   sum_pvals <- 0
   seed.vec <- seq(1, nsubsamp)
   seed <- seed.vec[i]
-  # main_dir <- getwd()
-  # main_dir <- file.path(main_dir, paste0(file))
   main_dir <- file.path(main_dir,paste0("samplesize",sampsize))
   current_dir <- file.path(main_dir,paste0("dataset_",seed,"_",sampsize))
   xony_dir <- file.path(current_dir,"xony")
@@ -123,14 +107,12 @@ do_one <- function(i, j, sampsize, main_dir, xiony, yonxi, nsubsamp = 100)
 do_bootstrap <- function(main_dir, sampsize, xony, yonx, nsubsamp = 100){
   nboot <- 100
   seed.vec <- seq(1, nsubsamp)
-  # main_dir <- getwd()
-  # main_dir <- file.path(main_dir,paste0(file))
   i <- 1
   for (i in 1:nsubsamp) {
     i <- i
     trials <- 1:nboot
-    all <- lapply(trials,verify_boot, i=i, sampsize = sampsize, nsubsamp = nsubsamp, xiony = xony, yonxi = yonx, main_dir = main_dir)
-    # all <- mclapply(trials,verify_boot,i=i,seed=seed,mc.cores=detectCores())
+    # all <- lapply(trials,verify_boot, i=i, sampsize = sampsize, nsubsamp = nsubsamp, xiony = xony, yonxi = yonx, main_dir = main_dir)
+    all <- parallel::mclapply(trials,verify_boot,i=i,sampsize = sampsize, nsubsamp = nsubsamp, xiony = xony, yonxi = yonx, main_dir = main_dir,mc.cores=parallel::detectCores()-1)
   }
 
 }
