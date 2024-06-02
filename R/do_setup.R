@@ -52,13 +52,16 @@ verify_setup <- function(i, sampsize, main_dir, subdata_all, yonx, xiony, seed.v
   pointest(i, sampsize, main_dir, subdata_all, yonx, xiony, seed.vec)
 }
 
-do_setup <- function(data, main_dir, sampsize, yonx, xiony, nsubsamp = 100){
+do_setup <- function(data, main_dir, sampsize, yonx, xiony, run_parallel = T, nsubsamp = 100){
   colnames(data) <- c("x","y")
   seed.vec <- seq(1, nsubsamp)
   trials <- 1:nsubsamp
   main_dir <- file.path(main_dir,paste0("samplesize",sampsize))
   dir.create(main_dir)
-  # lapply(trials, verify_setup, sampsize = sampsize, main_dir = main_dir, subdata_all = data, yonx = yonx, xiony = xiony, seed.vec = seed.vec)
-  all <- parallel::mclapply(trials, verify_setup, sampsize = sampsize, main_dir = main_dir, subdata_all = data, yonx = yonx, xiony = xiony, seed.vec = seed.vec, mc.cores = parallel::detectCores() - 1)
+  if (run_parallel){
+    all <- parallel::mclapply(trials, verify_setup, sampsize = sampsize, main_dir = main_dir, subdata_all = data, yonx = yonx, xiony = xiony, seed.vec = seed.vec, mc.cores = parallel::detectCores() - 1)
+  }else{
+    all <- lapply(trials, verify_setup, sampsize = sampsize, main_dir = main_dir, subdata_all = data, yonx = yonx, xiony = xiony, seed.vec = seed.vec)
+  }
 }
 

@@ -1,4 +1,4 @@
-get_cddr_test <- function(sampsize, main_dir, nsubsamp=100, alpha = 0.05){
+get_cddr_test <- function(sampsize, main_dir, run_parallel = T, nsubsamp=100, alpha = 0.05){
   dfyx <- read.csv(file.path(main_dir,sprintf("p_valsyx_samp%d.csv", sampsize)))[,-1]
   dfxy <- read.csv(file.path(main_dir,sprintf("p_valsxy_samp%d.csv", sampsize)))[,-1]
   reject_yonx_and_xony <- 0
@@ -23,7 +23,7 @@ get_cddr_test <- function(sampsize, main_dir, nsubsamp=100, alpha = 0.05){
   }
   df_cddr <- data.frame(c(sampsize, reject_yonx_and_xony/nsubsamp, noreject_yonx_and_xony/nsubsamp, reject_yonx_noreject_xony/nsubsamp, reject_xony_noreject_yonx/nsubsamp))
   write.csv(df_cddr,file.path(main_dir,sprintf("cddr_samp%d.csv", sampsize)))
-  cddr_return <- data.frame(sampsize = sampsize, yonx_and_xony_reject = reject_yonx_and_xony/nsubsamp, yonx_and_xony_noreject = noreject_yonx_and_xony/nsubsamp, yonx_reject_xony_noreject = reject_yonx_noreject_xony/nsubsamp, xony_reject_yonx_noreject = reject_xony_noreject_yonx/nsubsamp)
+  cddr_return <- data.frame(samplesizes = sampsize, yonx_and_xony_reject = reject_yonx_and_xony/nsubsamp, yonx_and_xony_noreject = noreject_yonx_and_xony/nsubsamp, yonx_reject_xony_noreject = reject_yonx_noreject_xony/nsubsamp, xony_reject_yonx_noreject = reject_xony_noreject_yonx/nsubsamp)
 
   return(cddr_return)
 }

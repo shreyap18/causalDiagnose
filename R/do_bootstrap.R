@@ -104,15 +104,18 @@ do_one <- function(i, j, sampsize, main_dir, xiony, yonxi, nsubsamp = 100)
   return(sum_pvals)
 }
 
-do_bootstrap <- function(main_dir, sampsize, xony, yonx, nsubsamp = 100){
+do_bootstrap <- function(main_dir, sampsize, xony, yonx, run_parallel = T, nsubsamp = 100){
   nboot <- 100
   seed.vec <- seq(1, nsubsamp)
   i <- 1
   for (i in 1:nsubsamp) {
     i <- i
     trials <- 1:nboot
-    # all <- lapply(trials,verify_boot, i=i, sampsize = sampsize, nsubsamp = nsubsamp, xiony = xony, yonxi = yonx, main_dir = main_dir)
-    all <- parallel::mclapply(trials,verify_boot,i=i,sampsize = sampsize, nsubsamp = nsubsamp, xiony = xony, yonxi = yonx, main_dir = main_dir,mc.cores=parallel::detectCores()-1)
+    if (run_parallel){
+      all <- parallel::mclapply(trials,verify_boot,i=i,sampsize = sampsize, nsubsamp = nsubsamp, xiony = xony, yonxi = yonx, main_dir = main_dir,mc.cores=parallel::detectCores()-1)
+    }else{
+      all <- lapply(trials,verify_boot, i=i, sampsize = sampsize, nsubsamp = nsubsamp, xiony = xony, yonxi = yonx, main_dir = main_dir)
+    }
   }
 
 }

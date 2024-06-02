@@ -1,7 +1,7 @@
 #' @importFrom stats coef lm predict residuals sd
 #' @importFrom utils read.csv write.csv
 
-run_procedure <- function(data, dir, sampsizes, yonx, xiony, names_col_cddr, name_files, name_out, run_lingam = F, clear_files = T, nsubsamp = 100, early_stop = T){
+run_procedure <- function(data, dir, sampsizes, yonx, xiony, names_col_cddr, name_files, name_out, run_parallel = T, run_lingam = F, clear_files = T, nsubsamp = 100, early_stop = T, early_stop_thresh = 2){
   early_stop_iter = 0
   names_col_pval <- 1:nsubsamp
   cddr <- data.frame(matrix(ncol = length(names_col_cddr), nrow = 0))
@@ -15,8 +15,13 @@ run_procedure <- function(data, dir, sampsizes, yonx, xiony, names_col_cddr, nam
   pvalyx <- data.frame(matrix(ncol = length(names_col_pval), nrow = 0))
   colnames(pvalyx) <- names_col_pval
   pvalyx_samp <- NA
-  for (sampsize in sampsizes){
-    cddr_samp <- run_procedure_samp(data, dir, sampsize, yonx, xiony, run_lingam, clear_files, nsubsamp)
+  for (s in 1:length(sampsizes)){
+    sampsize <- sampsizes[s]
+    ## UNDO
+    cddr_samp <- run_procedure_samp(data, dir, sampsize, yonx, xiony, run_parallel, run_lingam, clear_files, nsubsamp)
+    # cddr_samp <- read.csv(paste0(dir,"/",name_files[1], sprintf("%d.csv", sampsize)),header = T)[,-1]
+    colnames(cddr_samp) <- names_col_cddr
+    # print(paste0("cddr_samp",cddr_samp))
     pvalxy_samp <- read.csv(paste0(dir,"/",name_files[2], sprintf("%d.csv", sampsize)),header = T)[,-1]
     pvalyx_samp <- read.csv(paste0(dir,"/",name_files[3], sprintf("%d.csv", sampsize)),header = T)[,-1]
     cddr <- rbind(cddr, cddr_samp)
@@ -24,7 +29,25 @@ run_procedure <- function(data, dir, sampsizes, yonx, xiony, names_col_cddr, nam
     pvalyx <- rbind(pvalyx, pvalyx_samp)
     if (cddr_samp$yonx_and_xony_reject == 1){
       early_stop_iter = early_stop_iter + 1
-      if (early_stop_iter > 1){
+      if (early_stop_iter > early_stop_thresh){
+        remain_s <- length(sampsizes)-s
+        if (run_lingam){
+          cddr_rest <- data.frame(
+            samplesizes = sampsizes[(s + 1):length(sampsizes)],
+            order_right = rep(1, remain_s),
+            order_left = rep(0, remain_s))
+          colnames(cddr_rest) <- names_col_cddr
+          cddr <- rbind(cddr, cddr_rest)
+        }else{
+          cddr_rest <- data.frame(
+            samplesizes = sampsizes[(s + 1):length(sampsizes)],
+            yonx_and_xony_reject = rep(1, remain_s),
+            yonx_and_xony_noreject = rep(0, remain_s),
+            yonx_reject_xony_noreject = rep(0, remain_s),
+            xony_reject_yonx_noreject = rep(0, remain_s))
+          colnames(cddr_rest) <- names_col_cddr
+          cddr <- rbind(cddr, cddr_rest)
+        }
         break
       }
     }
