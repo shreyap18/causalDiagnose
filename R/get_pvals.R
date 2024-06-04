@@ -68,7 +68,7 @@ get_pvals <- function(samplesize, dir, run_parallel = T, nboot = 100, nsubsamp =
 
     if (run_parallel){
       # Run the bootstrap process in parallel
-      bootstrap_results <- parallel::mclapply(1:nboot, process_bootstrap, xony_dir = xony_dir, yonx_dir = yonx_dir, mc.cores = parallel::detectCores() - 1)
+      bootstrap_results <- parallel::mclapply(1:nboot, process_bootstrap, xony_dir = xony_dir, yonx_dir = yonx_dir, mc.cores = parallelly::availableCores()-1)
     } else{
       bootstrap_results <- lapply(1:nboot, process_bootstrap, xony_dir = xony_dir, yonx_dir = yonx_dir)
     }
@@ -84,7 +84,7 @@ get_pvals <- function(samplesize, dir, run_parallel = T, nboot = 100, nsubsamp =
 
   if (run_parallel){
     # Run the subsample process in parallel
-    subsample_results <- parallel::mclapply(1:nsubsamp, process_subsample, mc.cores = parallel::detectCores() - 1)
+    subsample_results <- parallel::mclapply(1:nsubsamp, process_subsample, mc.cores = parallelly::availableCores()-1)
   }else{
     subsample_results <- lapply(1:nsubsamp, process_subsample)
   }

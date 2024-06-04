@@ -4,11 +4,14 @@ Version: 0.0.0.9000
 Authors@R: 
     person("Shreya", "Prakash", , "shreyap1@uw.edu", role = c("aut", "cre"))
 Description: This diagnostic tool for functional causal discovery is based on the paper "A General Diagnostic Tool for Functional Causal Discovery." By providing your dataset of size N, the functional causal model, and a vector of subsample sizes less than or equal to N, along with some additional details, you can obtain the CDDR diagnostic. This diagnostic plots the probability of each causal discovery outcome (e.g., X causes Y, Y causes X, or inconclusive) as a function of the subsample sizes.
-License: `use_mit_license()`, `use_gpl3_license()` or friends to pick a
-    license
+License: MIT + file LICENSE
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.3.1
 Imports: 
     ggplot2,
-    parallel
+    parallel,
+    parallelly
+Depends: 
+    R (>= 2.10)
+LazyData: true

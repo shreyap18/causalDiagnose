@@ -1,4 +1,4 @@
-pointest <- function(arg, samplesize, main_dir, subdata_all, yonx, xiony, seed.vec)
+pointest <- function(arg, samplesize, main_dir, subdata_all, fit_resid_yonxi, fit_resid_xiony, seed.vec)
 {
   ## randomization
   seed <- seed.vec[arg]
@@ -30,16 +30,23 @@ pointest <- function(arg, samplesize, main_dir, subdata_all, yonx, xiony, seed.v
     sum(diag(K%*%H%*%L%*%H))/n^2
   }
   X <- randomdataset1[,"x"]
-  fityonx <- lm(yonx, data=randomdataset1)
-  beta <- coef(fityonx)
-  e.y <- residuals(fityonx)
+  res_yonx <- fit_resid_yonxi(randomdataset1)
+  fityonx <- res_yonx$model
+  e.y <- res_yonx$residuals
+  # fityonx <- lm(yonx, data=randomdataset1)
+  # beta <- coef(fityonx)
+  # e.y <- residuals(fityonx)
+
   theta <- est.fun(X,e.y,nrow(randomdataset1))
 
   write.csv(theta,file.path(yonx_dir,"thetahat.csv"))
   ############################################################xony######################################
-  fitxiony <- lm(xiony, data=randomdataset1)
-  betai <- coef(fitxiony)
-  e.x <- residuals(fitxiony)
+  res_xiony <- fit_resid_xiony(randomdataset1)
+  fitxiony <- res_xiony$model
+  e.x <- res_xiony$residuals
+  # fitxiony <- lm(xiony, data=randomdataset1)
+  # betai <- coef(fitxiony)
+  # e.x <- residuals(fitxiony)
 
   x_theta <- est.fun(e.x,randomdataset1[,"y"], nrow(randomdataset1))
 
@@ -47,21 +54,21 @@ pointest <- function(arg, samplesize, main_dir, subdata_all, yonx, xiony, seed.v
 }
 
 
-verify_setup <- function(i, sampsize, main_dir, subdata_all, yonx, xiony, seed.vec)
+verify_setup <- function(i, sampsize, main_dir, subdata_all, fit_resid_yonx, fit_resid_xony, seed.vec)
 {
-  pointest(i, sampsize, main_dir, subdata_all, yonx, xiony, seed.vec)
+  pointest(i, sampsize, main_dir, subdata_all, fit_resid_yonx, fit_resid_xony, seed.vec)
 }
 
-do_setup <- function(data, main_dir, sampsize, yonx, xiony, run_parallel = T, nsubsamp = 100){
+do_setup <- function(data, main_dir, sampsize, fit_resid_yonx, fit_resid_xony, run_parallel = T, nsubsamp = 100){
   colnames(data) <- c("x","y")
   seed.vec <- seq(1, nsubsamp)
   trials <- 1:nsubsamp
   main_dir <- file.path(main_dir,paste0("samplesize",sampsize))
   dir.create(main_dir)
   if (run_parallel){
-    all <- parallel::mclapply(trials, verify_setup, sampsize = sampsize, main_dir = main_dir, subdata_all = data, yonx = yonx, xiony = xiony, seed.vec = seed.vec, mc.cores = parallel::detectCores() - 1)
+    all <- parallel::mclapply(trials, verify_setup, sampsize = sampsize, main_dir = main_dir, subdata_all = data, fit_resid_yonx = fit_resid_yonx, fit_resid_xony = fit_resid_xony, seed.vec = seed.vec, mc.cores = parallelly::availableCores()-1)
   }else{
-    all <- lapply(trials, verify_setup, sampsize = sampsize, main_dir = main_dir, subdata_all = data, yonx = yonx, xiony = xiony, seed.vec = seed.vec)
+    all <- lapply(trials, verify_setup, sampsize = sampsize, main_dir = main_dir, subdata_all = data, fit_resid_yonx = fit_resid_yonx, fit_resid_xony = fit_resid_xony, seed.vec = seed.vec)
   }
 }
 
