@@ -298,10 +298,8 @@ DirectLiNGAM <- R6::R6Class("DirectLiNGAM", inherit = BaseLiNGAM,
                             ),
 )
 
-## getting lingam results
-get_cddr_lingam <- function(sampsize, dir, nsubsamp = 100){
-  # main_dir <- getwd()
-  # main_dir <- file.path(main_dir, paste0(file))
+## getting results
+get_cddr_deterministic <- function(sampsize, dir, run_causal_method = function(x) {NA}, run_lingam = T, nsubsamp = 100){
   seed.vec <- seq(1, nsubsamp)
   main_dir <- file.path(dir,paste0("samplesize",sampsize))
   total_right <- 0
@@ -311,18 +309,22 @@ get_cddr_lingam <- function(sampsize, dir, nsubsamp = 100){
     current_dir <- file.path(main_dir,paste0("dataset_",seed,"_",sampsize))
     data <- read.csv(paste0(current_dir,"/dataset",".csv"))[,-1]
     df <- data.frame(x = data$x, y = data$y)
-    mdl <- DirectLiNGAM$new()
-    mdl$fit(df)
-    X <- as.matrix(df)
-    i <- 1
-    j <- 2
-    xi_std = (X[, i] - mean(X[, i])) / sd(X[, i])
-    xj_std = (X[, j] - mean(X[, j])) / sd(X[, j])
+    if (run_lingam){
+      mdl <- DirectLiNGAM$new()
+      mdl$fit(df)
+      X <- as.matrix(df)
+      i <- 1
+      j <- 2
+      xi_std = (X[, i] - mean(X[, i])) / sd(X[, i])
+      xj_std = (X[, j] - mean(X[, j])) / sd(X[, j])
 
-    ri_j <- mdl$residual(xi_std, xj_std)
-    rj_i <- mdl$residual(xj_std, xi_std)
-
-    order <- mdl$causal_order
+      ri_j <- mdl$residual(xi_std, xj_std)
+      rj_i <- mdl$residual(xj_std, xi_std)
+      order <- mdl$causal_order
+    }
+    else{
+      order <- run_causal_method(df)
+    }
     if (sum(order == c(1,2)) == 2){
       total_right <- total_right + 1
     }
@@ -332,9 +334,9 @@ get_cddr_lingam <- function(sampsize, dir, nsubsamp = 100){
   }
   cddr_right <- total_right/nsubsamp
   cddr_left <- total_left/nsubsamp
-  df_cddr <- data.frame(c(sampsize, cddr_right, cddr_left))
+  df_cddr <- data.frame(samplesizes = sampsize, order_right = cddr_right, order_left = cddr_left)
   # main_dir <- getwd()
   # main_dir <- file.path(main_dir, paste0(file))
-  write.csv(df_cddr,file.path(dir,sprintf("cddr_lingam_samp%d.csv", sampsize)))
+  write.csv(df_cddr,file.path(dir,sprintf("cddr_deter_samp%d.csv", sampsize)))
   return(df_cddr)
 }

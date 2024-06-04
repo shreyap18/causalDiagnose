@@ -121,8 +121,7 @@ do_one <- function(i, j, sampsize, main_dir, fit_resid_xiony, predict_xiony, fit
   return(sum_pvals)
 }
 
-do_bootstrap <- function(main_dir, sampsize, fit_resid_xony, predict_xony, fit_resid_yonx, predict_yonx, run_parallel = T, nsubsamp = 100){
-  nboot <- 100
+do_bootstrap <- function(main_dir, sampsize, fit_resid_xony, predict_xony, fit_resid_yonx, predict_yonx, run_parallel = T, nsubsamp = 100, nboot = 100){
   seed.vec <- seq(1, nsubsamp)
   i <- 1
   for (i in 1:nsubsamp) {

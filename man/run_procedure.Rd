@@ -8,35 +8,42 @@ run_procedure(
   data,
   dir,
   sampsizes,
-  fit_resid_yonx,
-  predict_yonx,
-  fit_resid_xony,
-  predict_xony,
   names_col_cddr,
   name_files,
   name_out,
+  fit_resid_yonx = function(x) {
+     NA
+ },
+  predict_yonx = function(x) {
+     NA
+ },
+  fit_resid_xony = function(x) {
+     NA
+ },
+  predict_xony = function(x) {
+     NA
+ },
   run_parallel = T,
-  run_lingam = F,
+  run_causal_method = function(x) {
+     NA
+ },
+  run_lingam = T,
+  run_test = T,
   clear_files = T,
   nsubsamp = 100,
+  nboot = 100,
+  alpha = 0.05,
   early_stop = T,
-  early_stop_thresh = 2
+  early_stop_thresh = 2,
+  fill_rest_subsamp = T
 )
 }
 \arguments{
-\item{data}{A dataframe of size N with two columns: x and y}
+\item{data}{A dataframe of size N with two columns: x and y, where x->y is the hypothesized direction}
 
 \item{dir}{A string of the directory where want to save the csv file of estimated causal discovery outcome rates for each subsample size}
 
 \item{sampsizes}{A vector of subsample sizes where the largest subsample size is less than equal to N}
-
-\item{fit_resid_yonx}{A function that takes in a dataframe with variable x, fits a model of choice on the data (e.g. linear regression) where y is the outcome and x is the predictor, and function outputs a list with two components: model, which is the model object, and residuals, the residuals after fitting the model on the data}
-
-\item{predict_yonx}{A function that takes in a model object (where y is the outcome and x is the predictor) and newdata with two variables x and y, gets predictions based on the model for the newdata and returns these predictions}
-
-\item{fit_resid_xony}{A function that takes in a dataframe with variable y, fits a model of choice on the data (e.g. linear regression) where x is the outcome and y is the predictor, and function outputs a list with two components: model, which is the model object, and residuals, the residuals after fitting the model on the data}
-
-\item{predict_xony}{A function that takes in a model object (where x is the outcome and y is the predictor) and newdata with two variables x and y, gets predictions based on the model for the newdata and returns these predictions}
 
 \item{names_col_cddr}{A vector of names for each of the columns in the estimated causal discovery outcome rates dataframe}
 
@@ -44,17 +51,35 @@ run_procedure(
 
 \item{name_out}{A vector of names for the output files corresponding to the estimated causal discovery outcome rates dataframe as well as the pvalues}
 
+\item{fit_resid_yonx}{A function that takes in a dataframe with variable x, fits a model of choice on the data (e.g. linear regression) where y is the outcome and x is the predictor, and function outputs a list with two components: model, which is the model object, and residuals, the residuals after fitting the model on the data, default is a function that returns NA as this would only be relevant for test-based method}
+
+\item{predict_yonx}{A function that takes in a model object (where y is the outcome and x is the predictor) and newdata with two variables x and y, gets predictions based on the model for the newdata and returns these predictions, default is a function that returns NA as this would only be relevant for test-based method}
+
+\item{fit_resid_xony}{A function that takes in a dataframe with variable y, fits a model of choice on the data (e.g. linear regression) where x is the outcome and y is the predictor, and function outputs a list with two components: model, which is the model object, and residuals, the residuals after fitting the model on the data, default is a function that returns NA as this would only be relevant for test-based method}
+
+\item{predict_xony}{A function that takes in a model object (where x is the outcome and y is the predictor) and newdata with two variables x and y, gets predictions based on the model for the newdata and returns these predictions, default is a function that returns NA as this would only be relevant for test-based method}
+
 \item{run_parallel}{A logical value on whether to run items using parallel processing, default is True}
 
-\item{run_lingam}{A logical value on whether to run LiNGAM method, default is False to run the test-based method}
+\item{run_causal_method}{A function that takes in a dataframe with two variables, x and y and returns the estimated causal ordering as a vector (e.g. c(1,2) for x->y or c(2,1) for y->x), default is a function that returns NA as this is only relevant for deterministic methods (not the test-based method)}
+
+\item{run_lingam}{A logical value on whether to run LiNGAM method, default is True}
+
+\item{run_test}{A logical value on whether to run test-based method, default is True}
 
 \item{clear_files}{A logical value on whether to clear the files generated in the bootstrap procedure for each subsample size, default is True}
 
-\item{nsubsamp}{A numeric value for S, the number of subsamples}
+\item{nsubsamp}{A numeric value for S, the number of subsamples, default is 100}
+
+\item{nboot}{A numeric value for the number of bootstrap repetitions, default is 100}
+
+\item{alpha}{A numeric value for the alpha level (probability of type 1 error), default is 0.05}
 
 \item{early_stop}{A logical value on whether to stop the method early for the test-based method if the rate of rejecting both directions converges to 1, default is True}
 
 \item{early_stop_thresh}{A numerical value on what the threshold is to stop early (e.g after 3 subsample sizes where the rate of rejecting in both directions is 1), default is 2}
+
+\item{fill_rest_subsamp}{A logical value on whether to fill the rest of the subsamples with the converged rate (e.g 1) when early stopping is used, default is True}
 }
 \value{
 A dataframe of the estimated causal discovery outcome rates for each subsample size considered. Also locally saves these probabilities as well as the p-values into the corresponding name_out files
@@ -90,7 +115,14 @@ names_col_cddr <- c("samplesizes", "yonx_and_xony_reject",
 main_dir <- "~/Documents/cddr_paper/package/test"
 name_files <- c("cddr_samp", "p_valsxy_samp", "p_valsyx_samp")
 name_out <- c("cddr_test", "p_valsxy", "p_valsyx")
-cddr <- run_procedure(pop_cal, main_dir, sampsizes,
-fit_resid_yonx, predict_yonx, fit_resid_xony, predict_xony,
-names_col_cddr, name_files, name_out)
+cddr <- run_procedure(pop_cal, main_dir, sampsizes, names_col_cddr, name_files,
+name_out, fit_resid_yonx, predict_yonx, fit_resid_xony, predict_xony)
+
+sampsizes <- c(seq(20, 40, 10))
+names_col_cddr <- c("samplesizes", "order_right", "order_left")
+main_dir <- "~/Documents/cddr_paper/package/test"
+name_files <- c("cddr_deter_samp")
+name_out <- c("cddr_lingam")
+cddr_lingam <- run_procedure(pop_cal, main_dir, sampsizes, names_col_cddr,
+name_files, name_out, run_test = FALSE)
 }
