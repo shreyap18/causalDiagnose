@@ -68,6 +68,9 @@ name_out <- c("cddr_test_pop_cal", "p_valsxy_pop_cal", "p_valsyx_pop_cal")
 
 ## obtaining estimated outcome rates
 cddr_test_pop_cal <- run_procedure(pop_cal, main_dir, samplesizes, names_col_cddr, name_files, name_out, fit_resid_yonx, predict_yonx, fit_resid_xony, predict_xony)
+#> Warning in dir.create(main_dir):
+#> '/Users/shreyaprakash/Documents/cddr_paper/package/test/samplesize120' already
+#> exists
 
 ## getting CDDR diagnostic
 outcome_columns <- c("yonx_and_xony_reject", "yonx_and_xony_noreject",
@@ -108,7 +111,7 @@ This is an example to obtain the CDDR diagnostic applied to a trivial
 causal discovery method that outputs the causal ordering c(1,2) with
 probability 0.5 for the Population and Food consumption dataset. This
 showcases how to apply the CDDR diagnostic to any deterministic
-bivariate function causal discovery method.
+bivariate functional causal discovery method.
 
 ``` r
 library(causalDiagnose)

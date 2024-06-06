@@ -335,8 +335,6 @@ get_cddr_deterministic <- function(sampsize, dir, run_causal_method = function(x
   cddr_right <- total_right/nsubsamp
   cddr_left <- total_left/nsubsamp
   df_cddr <- data.frame(samplesizes = sampsize, order_right = cddr_right, order_left = cddr_left)
-  # main_dir <- getwd()
-  # main_dir <- file.path(main_dir, paste0(file))
   write.csv(df_cddr,file.path(dir,sprintf("cddr_deter_samp%d.csv", sampsize)))
   return(df_cddr)
 }

@@ -101,7 +101,7 @@ cddr_plot_lingam_pop_cal <- get_diagnose_plot(cddr_lingam_pop_cal, outcome_colum
 cddr_plot_lingam_pop_cal
 ```
 
-This is an example to obtain the CDDR diagnostic applied to a trivial causal discovery method that outputs the causal ordering c(1,2) with probability 0.5 for the Population and Food consumption dataset. This showcases how to apply the CDDR diagnostic to any deterministic bivariate function causal discovery method.
+This is an example to obtain the CDDR diagnostic applied to a trivial causal discovery method that outputs the causal ordering c(1,2) with probability 0.5 for the Population and Food consumption dataset. This showcases how to apply the CDDR diagnostic to any deterministic bivariate functional causal discovery method.
 
 ```{r}
 library(causalDiagnose)

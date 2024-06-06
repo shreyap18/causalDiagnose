@@ -36,9 +36,6 @@ pointest <- function(arg, samplesize, main_dir, subdata_all, fit_resid_yonxi, fi
     res_yonx <- fit_resid_yonxi(randomdataset1)
     fityonx <- res_yonx$model
     e.y <- res_yonx$residuals
-    # fityonx <- lm(yonx, data=randomdataset1)
-    # beta <- coef(fityonx)
-    # e.y <- residuals(fityonx)
 
     theta <- est.fun(X,e.y,nrow(randomdataset1))
 
@@ -47,9 +44,6 @@ pointest <- function(arg, samplesize, main_dir, subdata_all, fit_resid_yonxi, fi
     res_xiony <- fit_resid_xiony(randomdataset1)
     fitxiony <- res_xiony$model
     e.x <- res_xiony$residuals
-    # fitxiony <- lm(xiony, data=randomdataset1)
-    # betai <- coef(fitxiony)
-    # e.x <- residuals(fitxiony)
 
     x_theta <- est.fun(e.x,randomdataset1[,"y"], nrow(randomdataset1))
 

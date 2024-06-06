@@ -19,8 +19,6 @@ do.one.xony.seperate <- function(seed.id,dataset,theta,fit_resid_xiony,predict_x
   set.seed(seed.id+2333)
   res <- fit_resid_xiony(dataset)
   fitxiony <- res$model
-  # fitxiony <- lm(xiony, data=dataset)
-  # e.yi <- residuals(fitxiony)
   e.yi <- res$residuals
   e.centered <- e.yi - mean(e.yi)
 
@@ -37,12 +35,8 @@ do.one.xony.seperate <- function(seed.id,dataset,theta,fit_resid_xiony,predict_x
 
   Y.star <- predict_xiony(fitxiony, newdata) + eta.star
   newdata["x"] <- Y.star
-  # Y.star <- predict(fitxiony,newdata = newdata) + eta.star
-  # fit.star <- lm(Y.star~.,data = newdata)
   res.star <- fit_resid_xiony(newdata)
   fit.star <- res.star$model
-  # fit.star <- lm(Y.star~.,data = newdata)
-  # e.star <- residuals(fit.star)
   e.star <- res.star$residuals
 
   thetai <- est.fun1(X.star[,1],e.star,n)
@@ -61,8 +55,6 @@ do.one.yonx.seperate <- function(seed.id,dataset,theta,fit_resid_yonxi,predict_y
   res <- fit_resid_yonxi(dataset)
   fityonxi <- res$model
   e.yi <- res$residuals
-  # fityonxi <- lm(yonxi, data=dataset)
-  # e.yi <- residuals(fityonxi)
   e.centered <- e.yi - mean(e.yi)
 
   n <- nrow(dataset)
@@ -79,10 +71,6 @@ do.one.yonx.seperate <- function(seed.id,dataset,theta,fit_resid_yonxi,predict_y
   res.star <- fit_resid_yonxi(newdata)
   fit.star <- res.star$model
   e.star <- res.star$residuals
-
-  # Y.star <- predict(fityonxi,newdata = newdata) + eta.star
-  # fit.star <- lm(Y.star~.,data = newdata)
-  # e.star <- residuals(fit.star)
 
   thetahat.star <- est.fun1(X.star[,1],e.star,n)
 
