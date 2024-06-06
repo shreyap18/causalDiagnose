@@ -26,7 +26,6 @@ calc_ci <- function(data, outcome_column, dataset_name, nsubsamp = 100, ci_level
 #' @export
 #'
 #' @examples
-#' "Gets the CDDR diagnostic for test-based approach example"
 #'
 #' cddr <- read.csv("~/Documents/cddr_paper/package/test/cddr_test_example.csv")[,-1]
 #' outcome_columns <- c("yonx_and_xony_reject", "yonx_and_xony_noreject",
@@ -34,14 +33,10 @@ calc_ci <- function(data, outcome_column, dataset_name, nsubsamp = 100, ci_level
 #' dataset_names <- c("p11", "p00", "p01", "p10")
 #' plots <- get_diagnose_plot(cddr, outcome_columns, dataset_names)
 #'
-#' "Gets the CDDR diagnostic for LiNGAM example"
 #' cddr_lingam <- read.csv("~/Documents/cddr_paper/package/test/cddr_lingam_example.csv")[,-1]
 #' outcome_columns <- c("order_right", "order_left")
 #' dataset_names <- c("d1", "d2")
 #' plots <- get_diagnose_plot(cddr_lingam, outcome_columns, dataset_names, is_test = FALSE)
-#'
-#' "Gets the CDDR diagnostic for example causal discovery method that randomly
-#' determines a direction with 0.5 probability"
 #'
 #' cddr_random <- read.csv("~/Documents/cddr_paper/package/test/cddr_random.csv")[,-1]
 #' outcome_columns <- c("order_right", "order_left")

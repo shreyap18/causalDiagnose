@@ -33,8 +33,6 @@
 #' @export
 #'
 #' @examples
-#' "Example getting the causal discovery outcome rates for the test-based approach
-#' in the linear setting, showcases use of procedure for the test-based setting"
 #'
 #' sampsizes <- c(seq(20, 40, 10))
 #' fit_resid_yonx <- function(data) {
@@ -66,8 +64,6 @@
 #' cddr <- run_procedure(pop_cal, main_dir, sampsizes, names_col_cddr, name_files,
 #' name_out, fit_resid_yonx, predict_yonx, fit_resid_xony, predict_xony)
 #'
-#' "Example getting the causal discovery outcome rates for LiNGAM, showcases use of
-#' procedure for LiNGAM setting"
 #'
 #' sampsizes <- c(seq(20, 40, 10))
 #' names_col_cddr <- c("samplesizes", "order_right", "order_left")
@@ -75,11 +71,8 @@
 #' name_files <- c("cddr_deter_samp")
 #' name_out <- c("cddr_lingam")
 #' cddr_lingam <- run_procedure(pop_cal, main_dir, sampsizes, names_col_cddr,
-#' name_files, name_out, run_test = FALSE, early_stop_thresh = 0.9)
+#' name_files, name_out, run_test = FALSE, early_stop_thresh = 0.95)
 #'
-#' "Example getting the causal discovery outcome rates for a method that randomly
-#' chooses causal ordering c(1,2) with probability 0.5, showcases how to use the
-#' procedure for casual discovery methods of the user's choosing"
 #'
 #' sampsizes <- c(seq(20, 60, 10))
 #' names_col_cddr <- c("samplesizes", "order_right", "order_left")
@@ -91,11 +84,11 @@
 #'     if (p == 0){
 #'       return(c(1,2))}
 #'    else{
-#'       return(c(1,2))
+#'       return(c(2,1))
 #'       }}
 #' cddr_random <- run_procedure(pop_cal, main_dir, sampsizes, names_col_cddr,name_files,
 #' name_out, run_test = FALSE, run_lingam = FALSE, run_causal_method = run_causal_method,
-#' early_stop_thresh = 0.9)
+#' early_stop_thresh = 0.95)
 
 run_procedure <- function(data, dir, sampsizes, names_col_cddr, name_files, name_out, fit_resid_yonx = function(x) {NA}, predict_yonx = function(x) {NA}, fit_resid_xony = function(x) {NA}, predict_xony = function(x) {NA}, run_parallel = T, num_cores = availableCores()-1, run_causal_method = function(x) {NA}, run_lingam = T, run_test = T, clear_files = T, nsubsamp = 100, nboot = 100, alpha = 0.05, early_stop = T, early_stop_count = 2, early_stop_thresh = 1, fill_rest_subsamp = F){
   early_stop_iter = 0

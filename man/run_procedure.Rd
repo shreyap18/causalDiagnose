@@ -94,8 +94,6 @@ A dataframe of the estimated causal discovery outcome rates for each subsample s
 Get estimated causal discovery outcome rates as a function of subsample size
 }
 \examples{
-"Example getting the causal discovery outcome rates for the test-based approach
-in the linear setting, showcases use of procedure for the test-based setting"
 
 sampsizes <- c(seq(20, 40, 10))
 fit_resid_yonx <- function(data) {
@@ -127,8 +125,6 @@ name_out <- c("cddr_test", "p_valsxy", "p_valsyx")
 cddr <- run_procedure(pop_cal, main_dir, sampsizes, names_col_cddr, name_files,
 name_out, fit_resid_yonx, predict_yonx, fit_resid_xony, predict_xony)
 
-"Example getting the causal discovery outcome rates for LiNGAM, showcases use of
-procedure for LiNGAM setting"
 
 sampsizes <- c(seq(20, 40, 10))
 names_col_cddr <- c("samplesizes", "order_right", "order_left")
@@ -136,11 +132,8 @@ main_dir <- "~/Documents/cddr_paper/package/test"
 name_files <- c("cddr_deter_samp")
 name_out <- c("cddr_lingam")
 cddr_lingam <- run_procedure(pop_cal, main_dir, sampsizes, names_col_cddr,
-name_files, name_out, run_test = FALSE, early_stop_thresh = 0.9)
+name_files, name_out, run_test = FALSE, early_stop_thresh = 0.95)
 
-"Example getting the causal discovery outcome rates for a method that randomly
-chooses causal ordering c(1,2) with probability 0.5, showcases how to use the
-procedure for casual discovery methods of the user's choosing"
 
 sampsizes <- c(seq(20, 60, 10))
 names_col_cddr <- c("samplesizes", "order_right", "order_left")
@@ -152,9 +145,9 @@ run_causal_method <- function(data){
     if (p == 0){
       return(c(1,2))}
    else{
-      return(c(1,2))
+      return(c(2,1))
       }}
 cddr_random <- run_procedure(pop_cal, main_dir, sampsizes, names_col_cddr,name_files,
 name_out, run_test = FALSE, run_lingam = FALSE, run_causal_method = run_causal_method,
-early_stop_thresh = 0.9)
+early_stop_thresh = 0.95)
 }
