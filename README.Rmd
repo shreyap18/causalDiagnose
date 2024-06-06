@@ -113,7 +113,7 @@ main_dir <- "~/Documents/cddr_paper/package/test"
 name_files <- c("cddr_deter_samp")
 name_out <- c("cddr_random_pop_cal")
 run_causal_method <- function(data){
-  p <- rbinom(1, 1, p = 0.4)
+  p <- rbinom(1, 1, p = 0.5)
     if (p == 0){
       return(c(1,2))}
    else{
