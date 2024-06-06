@@ -24,6 +24,7 @@ run_procedure(
      NA
  },
   run_parallel = T,
+  num_cores = availableCores() - 1,
   run_causal_method = function(x) {
      NA
  },
@@ -34,8 +35,9 @@ run_procedure(
   nboot = 100,
   alpha = 0.05,
   early_stop = T,
-  early_stop_thresh = 2,
-  fill_rest_subsamp = T
+  early_stop_count = 2,
+  early_stop_thresh = 1,
+  fill_rest_subsamp = F
 )
 }
 \arguments{
@@ -61,6 +63,8 @@ run_procedure(
 
 \item{run_parallel}{A logical value on whether to run items using parallel processing, default is True}
 
+\item{num_cores}{A numeric value for the number of cores, default is availableCores()-1}
+
 \item{run_causal_method}{A function that takes in a dataframe with two variables, x and y and returns the estimated causal ordering as a vector (e.g. c(1,2) for x->y or c(2,1) for y->x), default is a function that returns NA as this is only relevant for deterministic methods (not the test-based method)}
 
 \item{run_lingam}{A logical value on whether to run LiNGAM method, default is True}
@@ -77,9 +81,11 @@ run_procedure(
 
 \item{early_stop}{A logical value on whether to stop the method early for the test-based method if the rate of rejecting both directions converges to 1, default is True}
 
-\item{early_stop_thresh}{A numerical value on what the threshold is to stop early (e.g after 3 subsample sizes where the rate of rejecting in both directions is 1), default is 2}
+\item{early_stop_count}{A numerical value on what the threshold is to stop early (e.g after 3 subsample sizes where the rate of rejecting in both directions is 1), default is 2}
 
-\item{fill_rest_subsamp}{A logical value on whether to fill the rest of the subsamples with the converged rate (e.g 1) when early stopping is used, default is True}
+\item{early_stop_thresh}{A numerical value on what the numerical threshold is to stop early (e.g stop if the rate of rejecting in both directions is 1), default is 1}
+
+\item{fill_rest_subsamp}{A logical value on whether to fill the rest of the subsamples with early_stop_thresh (e.g 1) when early stopping is used, default is False}
 }
 \value{
 A dataframe of the estimated causal discovery outcome rates for each subsample size considered. Also locally saves these probabilities as well as the p-values into the corresponding name_out files
@@ -88,6 +94,9 @@ A dataframe of the estimated causal discovery outcome rates for each subsample s
 Get estimated causal discovery outcome rates as a function of subsample size
 }
 \examples{
+"Example getting the causal discovery outcome rates for the test-based approach
+in the linear setting, showcases use of procedure for the test-based setting"
+
 sampsizes <- c(seq(20, 40, 10))
 fit_resid_yonx <- function(data) {
   model <- lm(formula("y~x"), data = data)
@@ -118,11 +127,34 @@ name_out <- c("cddr_test", "p_valsxy", "p_valsyx")
 cddr <- run_procedure(pop_cal, main_dir, sampsizes, names_col_cddr, name_files,
 name_out, fit_resid_yonx, predict_yonx, fit_resid_xony, predict_xony)
 
+"Example getting the causal discovery outcome rates for LiNGAM, showcases use of
+procedure for LiNGAM setting"
+
 sampsizes <- c(seq(20, 40, 10))
 names_col_cddr <- c("samplesizes", "order_right", "order_left")
 main_dir <- "~/Documents/cddr_paper/package/test"
 name_files <- c("cddr_deter_samp")
 name_out <- c("cddr_lingam")
 cddr_lingam <- run_procedure(pop_cal, main_dir, sampsizes, names_col_cddr,
-name_files, name_out, run_test = FALSE)
+name_files, name_out, run_test = FALSE, early_stop_thresh = 0.9)
+
+"Example getting the causal discovery outcome rates for a method that randomly
+chooses causal ordering c(1,2) with probability 0.5, showcases how to use the
+procedure for casual discovery methods of the user's choosing"
+
+sampsizes <- c(seq(20, 60, 10))
+names_col_cddr <- c("samplesizes", "order_right", "order_left")
+main_dir <- "~/Documents/cddr_paper/package/test"
+name_files <- c("cddr_deter_samp")
+name_out <- c("cddr_random")
+run_causal_method <- function(data){
+  p <- rbinom(1, 1, p = 0.6)
+    if (p == 0){
+      return(c(1,2))}
+   else{
+      return(c(1,2))
+      }}
+cddr_random <- run_procedure(pop_cal, main_dir, sampsizes, names_col_cddr,name_files,
+name_out, run_test = FALSE, run_lingam = FALSE, run_causal_method = run_causal_method,
+early_stop_thresh = 0.9)
 }

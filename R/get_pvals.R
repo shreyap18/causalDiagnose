@@ -38,7 +38,9 @@
 #   write.csv(dfy,file.path(dir,sprintf("p_valsyx_samp%d.csv", samplesize)))
 # }
 
-get_pvals <- function(samplesize, dir, run_parallel = T, nboot = 100, nsubsamp = 100) {
+#' @importFrom parallelly availableCores
+
+get_pvals <- function(samplesize, dir, run_parallel = T, num_cores = availableCores()-1, nboot = 100, nsubsamp = 100) {
   seed.vec <- seq(1, nsubsamp)
   p_vals_xy <- rep(NA, nsubsamp)
   p_vals_yx <- rep(NA, nsubsamp)
@@ -68,7 +70,7 @@ get_pvals <- function(samplesize, dir, run_parallel = T, nboot = 100, nsubsamp =
 
     if (run_parallel){
       # Run the bootstrap process in parallel
-      bootstrap_results <- parallel::mclapply(1:nboot, process_bootstrap, xony_dir = xony_dir, yonx_dir = yonx_dir, mc.cores = parallelly::availableCores()-1)
+      bootstrap_results <- parallel::mclapply(1:nboot, process_bootstrap, xony_dir = xony_dir, yonx_dir = yonx_dir, mc.cores = num_cores)
     } else{
       bootstrap_results <- lapply(1:nboot, process_bootstrap, xony_dir = xony_dir, yonx_dir = yonx_dir)
     }
@@ -84,7 +86,7 @@ get_pvals <- function(samplesize, dir, run_parallel = T, nboot = 100, nsubsamp =
 
   if (run_parallel){
     # Run the subsample process in parallel
-    subsample_results <- parallel::mclapply(1:nsubsamp, process_subsample, mc.cores = parallelly::availableCores()-1)
+    subsample_results <- parallel::mclapply(1:nsubsamp, process_subsample, mc.cores = num_cores)
   }else{
     subsample_results <- lapply(1:nsubsamp, process_subsample)
   }

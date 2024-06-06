@@ -1,3 +1,4 @@
+#' @importFrom parallelly availableCores
 pointest <- function(arg, samplesize, main_dir, subdata_all, fit_resid_yonxi, fit_resid_xiony, seed.vec, run_test)
 {
   ## randomization
@@ -63,14 +64,14 @@ verify_setup <- function(i, sampsize, main_dir, subdata_all, fit_resid_yonx, fit
   pointest(i, sampsize, main_dir, subdata_all, fit_resid_yonx, fit_resid_xony, seed.vec, run_test)
 }
 
-do_setup <- function(data, main_dir, sampsize, fit_resid_yonx, fit_resid_xony, run_parallel = T, nsubsamp = 100, run_test = T){
+do_setup <- function(data, main_dir, sampsize, fit_resid_yonx, fit_resid_xony, run_parallel = T, num_cores = availableCores()-1, nsubsamp = 100, run_test = T){
   colnames(data) <- c("x","y")
   seed.vec <- seq(1, nsubsamp)
   trials <- 1:nsubsamp
   main_dir <- file.path(main_dir,paste0("samplesize",sampsize))
   dir.create(main_dir)
   if (run_parallel){
-    all <- parallel::mclapply(trials, verify_setup, sampsize = sampsize, main_dir = main_dir, subdata_all = data, fit_resid_yonx = fit_resid_yonx, fit_resid_xony = fit_resid_xony, seed.vec = seed.vec, run_test = run_test, mc.cores = parallelly::availableCores()-1)
+    all <- parallel::mclapply(trials, verify_setup, sampsize = sampsize, main_dir = main_dir, subdata_all = data, fit_resid_yonx = fit_resid_yonx, fit_resid_xony = fit_resid_xony, seed.vec = seed.vec, run_test = run_test, mc.cores = num_cores)
   }else{
     all <- lapply(trials, verify_setup, sampsize = sampsize, main_dir = main_dir, subdata_all = data, fit_resid_yonx = fit_resid_yonx, fit_resid_xony = fit_resid_xony, seed.vec = seed.vec, run_test = run_test)
   }

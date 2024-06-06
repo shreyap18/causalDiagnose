@@ -1,3 +1,5 @@
+#' @importFrom parallelly availableCores
+
 est.fun1 <- function(X,e,n)
 {
   K <- L <- matrix(NA,nrow = n,ncol = n)
@@ -121,14 +123,14 @@ do_one <- function(i, j, sampsize, main_dir, fit_resid_xiony, predict_xiony, fit
   return(sum_pvals)
 }
 
-do_bootstrap <- function(main_dir, sampsize, fit_resid_xony, predict_xony, fit_resid_yonx, predict_yonx, run_parallel = T, nsubsamp = 100, nboot = 100){
+do_bootstrap <- function(main_dir, sampsize, fit_resid_xony, predict_xony, fit_resid_yonx, predict_yonx, run_parallel = T, num_cores = availableCores()-1, nsubsamp = 100, nboot = 100){
   seed.vec <- seq(1, nsubsamp)
   i <- 1
   for (i in 1:nsubsamp) {
     i <- i
     trials <- 1:nboot
     if (run_parallel){
-      all <- parallel::mclapply(trials,verify_boot,i=i,sampsize = sampsize, nsubsamp = nsubsamp, fit_resid_xiony = fit_resid_xony, predict_xiony = predict_xony, fit_resid_yonxi = fit_resid_yonx, predict_yonxi = predict_yonx, main_dir = main_dir, mc.cores=parallelly::availableCores()-1)
+      all <- parallel::mclapply(trials,verify_boot,i=i,sampsize = sampsize, nsubsamp = nsubsamp, fit_resid_xiony = fit_resid_xony, predict_xiony = predict_xony, fit_resid_yonxi = fit_resid_yonx, predict_yonxi = predict_yonx, main_dir = main_dir, mc.cores = num_cores)
     }else{
       all <- lapply(trials,verify_boot,i=i,sampsize = sampsize, nsubsamp = nsubsamp, fit_resid_xiony = fit_resid_xony, predict_xiony = predict_xony, fit_resid_yonxi = fit_resid_yonx, predict_yonxi = predict_yonx, main_dir = main_dir)
     }

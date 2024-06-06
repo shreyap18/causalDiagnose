@@ -1,4 +1,4 @@
-get_cddr_test <- function(sampsize, main_dir, run_parallel = T, nsubsamp=100, alpha = 0.05){
+get_cddr_test <- function(sampsize, main_dir, nsubsamp=100, alpha = 0.05){
   dfyx <- read.csv(file.path(main_dir,sprintf("p_valsyx_samp%d.csv", sampsize)))[,-1]
   dfxy <- read.csv(file.path(main_dir,sprintf("p_valsxy_samp%d.csv", sampsize)))[,-1]
   reject_yonx_and_xony <- 0
