@@ -32,7 +32,7 @@ devtools::install_github("shreyap18/causalDiagnose")
 
 ## Example
 
-This is an example to obtain the CDDR diagnostic applied to the test-based approach for the Population and Food consumption dataset shown in the paper. Note that if we were to update functions for fitting and predicting to those based on, for example, additive noise models (ANM), we would be obtaining a CDDR diangostic for a test-based version of ANMs. More details are provided in the discussion section of the paper.
+This is an example to obtain the CDDR diagnostic applied to the test-based approach for the Population and Food consumption dataset shown in the paper. Note that if we were to update the functions for fitting and predicting to those based on, for example, additive noise models (ANM), we would be obtaining a CDDR diagnostic for a test-based version of ANMs. More details are provided in the discussion section of the paper.
 
 
 ```{r}

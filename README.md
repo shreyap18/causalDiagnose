@@ -28,11 +28,11 @@ devtools::install_github("shreyap18/causalDiagnose")
 
 This is an example to obtain the CDDR diagnostic applied to the
 test-based approach for the Population and Food consumption dataset
-shown in the paper. Note that if we were to update functions for fitting
-and predicting to those based on, for example, additive noise models
-(ANM), we would be obtaining a CDDR diangostic for a test-based version
-of ANMs. More details are provided in the discussion section of the
-paper.
+shown in the paper. Note that if we were to update the functions for
+fitting and predicting to those based on, for example, additive noise
+models (ANM), we would be obtaining a CDDR diagnostic for a test-based
+version of ANMs. More details are provided in the discussion section of
+the paper.
 
 ``` r
 library(causalDiagnose)
@@ -68,9 +68,6 @@ name_out <- c("cddr_test_pop_cal", "p_valsxy_pop_cal", "p_valsyx_pop_cal")
 
 ## obtaining estimated outcome rates
 cddr_test_pop_cal <- run_procedure(pop_cal, main_dir, samplesizes, names_col_cddr, name_files, name_out, fit_resid_yonx, predict_yonx, fit_resid_xony, predict_xony)
-#> Warning in dir.create(main_dir):
-#> '/Users/shreyaprakash/Documents/cddr_paper/package/test/samplesize120' already
-#> exists
 
 ## getting CDDR diagnostic
 outcome_columns <- c("yonx_and_xony_reject", "yonx_and_xony_noreject",
