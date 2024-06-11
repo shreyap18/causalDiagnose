@@ -7,7 +7,7 @@
 <!-- badges: end -->
 
 This diagnostic tool for functional causal discovery is based on the
-paper “A General Diagnostic Tool for Functional Causal Discovery.” By
+paper “A Diagnostic Tool for Functional Causal Discovery.” By
 providing your dataset of size N, the functional causal model, and a
 vector of subsample sizes less than or equal to N, along with some
 additional details, you can obtain the CDDR diagnostic. This diagnostic
